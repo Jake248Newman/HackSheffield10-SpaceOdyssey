@@ -12,9 +12,8 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import json
 import threading
 import random
-import time
 import datetime
-from datetime import datetime, timezone
+from datetime import datetime
 
 from Ship import Ship
 from CrewMember import CrewMember
@@ -22,10 +21,7 @@ from CrewMember import CrewMember
 #Gemini Config
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel(
-    'gemini-2.5-flash',
-    generation_config=GenerationConfig(
-        response_mime_type="application/json"
-    )
+    'gemini-2.5-flash',generation_config=GenerationConfig(response_mime_type="application/json")
 )
 safety_settings = {
         "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
@@ -92,7 +88,7 @@ def init_crew(crew_members):
     add_to_crew(crew)
 
 def main_loop():
-    if random.randint(0, 50) == 1:
+    if random.randint(0, 2) == 1:
         ship.decrease_fuel()
         decrease_fuel_log()
     ship.increase_date()
@@ -115,7 +111,9 @@ def main_loop():
         crew_string += i.get_crew_context()
 
     if random.randint(0,3) == 0:
-        warning = []
+        warning = [drift_off_course, crew_injury, alien_attack, mechanical_failure, asteroid_strike]
+        disaster = random.choice(warning)
+        disaster()
 
     response = ask_gemini_prompt(
         f"""
@@ -143,6 +141,29 @@ def main_loop():
     add_to_ship()
     add_to_crew(crew)
 
+def drift_off_course():
+    add_to_log("You're drifting off course towards a black hole", "CRITICAL")
+
+def crew_injury():
+    person = random.choice(crew)
+    person.set_status("Injured")
+    add_to_crew(crew)
+    add_to_log(person.get_name() + " has been injured", "warning")
+
+def alien_attack():
+    add_to_log("You are being threatened by aliens", "CRITICAL")
+
+def mechanical_failure():
+    add_to_log("There has been a mechanical failure", "warning")
+
+def asteroid_strike():
+    if ship.get_hull_integrity() > 45:
+        ship.set_hull_integrity(ship.get_hull_integrity() - 45)
+    else:
+        ship.set_hull_integrity(0)
+
+    add_to_log("You have been hit by asteroids", "CRITICAL")
+
 def decrease_fuel_log():
     if ship.get_fuel() > 30:
         add_to_log("Fuel level decreased", "Normal")
@@ -150,43 +171,6 @@ def decrease_fuel_log():
         add_to_log("Fuel level low", "Warning")
     else:
         add_to_log("Fuel very low", "CRITICAL")
-
-def ask_gemini_action(action):
-     prompt = f"""
-     You are the AI Computer dictating the story of a sci-fi spaceship game.
-
-     Current game Status:
-     - Fuel: {ship.get_fuel()}%
-     - Hull Integrity: {ship.get_hull_integrity()}%
-     - Oxygen: {ship.get_oxygen()}%
-
-     The Player just chose to: "{action}"
-
-     Determine the outcome based on sci-fi tropes.
-     - If Fuel is low, actions might fail.
-     - If Hull is low, the ship is sparking.
-
-     Return a JSON object with these exact keys:
-     {{
-         "log_entry": "A short, dramatic 1-sentence description of what happened.",
-         "fuel_change": (integer, e.g. -10),
-         "hull_change": (integer, e.g. 0 or -20 if damaged),
-         "distance_change": (integer, positive to move forward)
-     }}
-     """
-
-     try:
-         response = model.generate_content(prompt)
-         return json.loads(response.text)
-
-     except Exception as e:
-         print(f"Gemini Error: {e}")
-         return {
-             "log_entry": "AI Connection Offline. Manual Override.",
-             "fuel_change": -5,
-             "hull_change": 0,
-             "distance_change": 0
-         }
 
 def ask_gemini_prompt(prompt):
     try:
@@ -271,7 +255,10 @@ def next_day():
 @app.route("/cook_food", methods=["POST"])
 def cook_food():
     for crewmate in crew:
-        crewmate.set_hunger(100)
+        if crewmate.get_hunger() < 75:
+            crewmate.set_hunger(crewmate.get_hunger() + 25)
+        else:
+            crewmate.set_hunger(100)
     ship.set_food(ship.get_food() - 5)
 
     add_to_ship()
