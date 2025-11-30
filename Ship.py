@@ -85,3 +85,23 @@ class Ship:
 
     def set_ammo (self, ammo):
         self.__ammo = ammo
+
+    def get_ai_context(self):
+        """Returns a formatted string for the AI prompt"""
+        return f"""
+        [SHIP STATUS REPORT]
+        Current Date: {self.__year}-{self.__month:02d}-{self.__day:02d}
+        Mission Day: {self.__days}
+
+        [VITAL SYSTEMS]
+        - Fuel: {self.__fuel}%
+        - Hull Integrity: {self.__hull_integrity}%
+        - Oxygen Levels: {self.__oxygen}%
+
+        [CARGO MANIFEST]
+        - Food Reserves: {self.__food}%
+        - Water Reserves: {self.__water}%
+        - Medical Supplies: {self.__medical}%
+        - Spare Parts: {self.__spare_parts}
+        - Ammunition: {self.__ammo}
+        """

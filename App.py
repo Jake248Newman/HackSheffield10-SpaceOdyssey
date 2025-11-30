@@ -95,20 +95,43 @@ def main_loop():
         decrease_fuel_log()
     ship.increase_date()
 
-    #for crewmate in crew:
-    #    crewmate
+    for crewmate in crew:
+        crewmate.decrease_hunger(random.randint(10,20))
+        if crewmate.get_hunger() < 50:
+            crewmate.set_health(crewmate.get_health() - 5)
+        elif crewmate.get_hunger() > 90 and crewmate.get_health() < 95:
+            crewmate.set_health(crewmate.get_health() + 5)
 
-    response = ask_gemini_prompt("""The user has passed to the next day, generate a brief summary of some "
-                                 "events that could have happened, nothing serious or eventful, can be funny or waffle"
-                                 "Return a JSON object with this exact key:"
-                                 {{
-                                     "message": "your message to the player to begin the game and give them some backstory"
-                                 }}"""
-                                 )
+    crew_string = ""
 
-    print(response["message"])
+    for i in crew:
+        crew_string += i.get_crew_context()
+
+    if random.randint(0,3) == 0:
+        warning = []
+
+    response = ask_gemini_prompt(
+        f"""
+        The user has passed to the next day, generate a brief summary of some
+        events that could have happened, nothing serious or eventful, can be funny or waffle
+        
+        It must be a summary from an external point of view with no connection to the people involved in the ship.
+        Taking the current state of ship and crew into account. It could be helpful to comment on any crew or 
+        ship stats getting low 
+        
+        { ship.get_ai_context() }
+        { crew_string }
+        
+        Return a JSON object with this exact key:"
+        {{
+            "message": "your message to the player to begin the game and give them some backstory"
+        }}
+        """
+    )
+
     add_to_story(response["message"])
     add_to_ship()
+    add_to_crew(crew)
 
 def decrease_fuel_log():
     if ship.get_fuel() > 30:
@@ -228,8 +251,6 @@ def clear_database(tables=None):
         except Exception as e:
             print(f"An error occurred during deletion: {e}")
 
-
-
 @app.route("/next_day", methods=["POST"])
 def next_day():
     thread = threading.Thread(target=main_loop())
@@ -237,21 +258,121 @@ def next_day():
 
     return jsonify({"status": "received"})
 
-@app.route("/cook_food", methods=["GET"])
+@app.route("/cook_food", methods=["POST"])
 def cook_food():
-    pass
+    for crewmate in crew:
+        crewmate.set_hunger(100)
+    ship.set_food(ship.get_food() - 5)
 
-@app.route("/repair_ship", methods=["GET"])
+    add_to_ship()
+    add_to_crew(crew)
+
+    add_to_log("Kitchen is a little smokey", "normal")
+
+    thread = threading.Thread(target=main_loop())
+    thread.start()
+
+    return jsonify({"status": "received"})
+
+@app.route("/repair_ship", methods=["POST"])
 def repair_ship():
-    pass
+    if ship.get_hull_integrity() < 90 and ship.get_spare_parts() > 10:
+        ship.set_hull_integrity(ship.get_hull_integrity() + 10)
+        ship.set_spare_parts(ship.get_spare_parts() - 10)
 
-@app.route("/defend_ship", methods=["GET"])
+    if ship.get_hull_integrity() < 90:
+        add_to_log("Hull integrity is low", "warning")
+    elif ship.get_hull_integrity() < 80:
+        add_to_log("Hull integrity is very low", "CRITICAL")
+    else:
+        add_to_log("Hull integrity is safe", "normal")
+
+    add_to_ship()
+
+    thread = threading.Thread(target=main_loop())
+    thread.start()
+
+    return jsonify({"status": "received"})
+
+@app.route("/defend_ship", methods=["POST"])
 def defend_ship():
-    pass
+    if ship.get_ammo() > 10:
+        ship.set_ammo(ship.get_ammo() - 10)
+    else:
+        ship.set_ammo(0)
 
-@app.route("/heal_crew", methods=["GET"])
+    if ship.get_ammo() < 40:
+        add_to_log("Ammo is low", "warning")
+    elif ship.get_ammo() < 20:
+        add_to_log("Ammo is very low", "CRITICAL")
+
+    add_to_ship()
+
+    thread = threading.Thread(target=main_loop())
+    thread.start()
+
+    return jsonify({"status": "received"})
+
+@app.route("/heal_crew", methods=["POST"])
 def heal_crew():
-    pass
+    if ship.get_medical() > 20:
+        ship.set_medical(ship.get_medical() - 20)
+    else:
+        ship.set_medical(0)
+
+    if ship.get_medical() < 10:
+        add_to_log("Medical supplies are very low", "CRITICAL")
+    elif ship.get_medical() < 30:
+        add_to_log("Medical supplies are low", "warning")
+
+    for crewmate in crew:
+        if crewmate.get_health < 80:
+            crewmate.set_health(crewmate.get_health() + 20)
+        else:
+            crewmate.set_health(100)
+
+    add_to_ship()
+    add_to_crew(crew)
+
+    thread = threading.Thread(target=main_loop())
+    thread.start()
+
+    return jsonify({"status": "received"})
+
+@app.route("/replace_filters", methods=["POST"])
+def replace_filters():
+    if ship.get_spare_parts() > 5:
+        ship.set_spare_parts(ship.get_spare_parts() - 5)
+        if ship.get_water() < 85:
+            ship.set_water(ship.get_water() + 15)
+        else:
+            ship.set_water(100)
+
+    add_to_ship()
+
+    thread = threading.Thread(target=main_loop())
+    thread.start()
+
+    return jsonify({"status": "received"})
+
+@app.route("/correct_course", methods=["POST"])
+def correct_course():
+    if ship.get_fuel() > 15:
+        ship.set_fuel(ship.get_fuel() - 15)
+    else:
+        ship.set_fuel(0)
+
+    if ship.get_fuel() < 10:
+        add_to_log("Fuel is very low", "CRITICAL")
+    elif ship.get_fuel() < 40:
+        add_to_log("Fuel is low", "warning")
+
+    add_to_ship()
+
+    thread = threading.Thread(target=main_loop())
+    thread.start()
+
+    return jsonify({"status": "received"})
 
 if __name__ == '__main__':
     clear_database()
@@ -259,7 +380,7 @@ if __name__ == '__main__':
     response = ask_gemini_prompt(BEGIN_GAME)
     add_to_story(response["message"])
     add_to_ship()
-    add_to_log("All systems are good", 1)
+    add_to_log("All systems are good", "normal")
     init_crew(response["crew"])
 
     app.run(host='0.0.0.0', port=5000)

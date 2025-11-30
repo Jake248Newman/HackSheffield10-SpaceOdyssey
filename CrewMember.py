@@ -14,13 +14,13 @@ class CrewMember:
         self.name = name
 
     def get_health(self):
-        return str(self.health) + "%"
+        return self.health
 
     def set_health(self, health):
         self.health = health
 
     def get_sanity(self):
-        return str(self.sanity) + "%"
+        return self.sanity
 
     def set_sanity(self, sanity):
         self.sanity = sanity
@@ -32,7 +32,7 @@ class CrewMember:
         self.status = status
 
     def get_hunger(self):
-        return str(self.hunger) + "%"
+        return self.hunger
 
     def set_hunger(self, hunger):
         self.hunger = hunger
@@ -46,10 +46,15 @@ class CrewMember:
     def set_job(self, job):
         self.job = job
 
-    #todo update this
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "occupation": self.job,
-            "health": self.health
-        }
+    def get_crew_context(self):
+        """Returns a formatted personnel string for the AI"""
+        return f"""
+        [PERSONNEL FILE: {self.name.upper()}]
+        Role: {self.job}
+        Status: {self.status}
+
+        [BIOMETRICS]
+        - Health: {self.health}%
+        - Hunger: {self.hunger}% (Lower is hungry)
+        - Mental Stability: {self.sanity}%
+        """
