@@ -137,7 +137,7 @@ def main_loop():
     if (random.randint(0, 4) == 4 and not HAS_BEEN_RICK_ROLLED):
         add_to_log("A mysterious transmission was received from yeltsa kcir: pu uoy evig annog reven", "normal")
 
-    add_to_story(ship.get_days() + ": " + response["message"])
+    add_to_story("Day " + str(ship.get_days()) + ": " + response["message"])
     add_to_ship()
     add_to_crew(crew)
 
