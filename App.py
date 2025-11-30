@@ -139,7 +139,7 @@ def main_loop():
         add_to_log("A mysterious transmission was received from yeltsa kcir: pu uoy evig annog reven", "normal")
         HAS_BEEN_RICK_ROLLED = True
 
-    add_to_story(response["message"])
+    add_to_story("Day " + str(ship.get_days()) + ": " + response["message"])
     add_to_ship()
     add_to_crew(crew)
 
