@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Processing</title>
+    <style>
+        body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .container { border: 2px solid #0f0; padding: 40px; text-align: center; width: 60%; max-width: 600px; box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); }
+        h1 { margin: 0; font-size: 2em; letter-spacing: 2px; }
+        .status { color: #888; margin-top: 10px; font-size: 1.2em; text-transform: uppercase; }
+        .progress-box { width: 100%; background: #222; height: 25px; margin-top: 30px; border: 1px solid #0f0; position: relative; }
+        .progress-bar { height: 100%; background: #0f0; width: 0%; transition: width 3.1s cubic-bezier(0.1, 0.7, 1.0, 0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>COMMAND ACCEPTED</h1>
+        <div id="status-text" class="status">Initializing...</div>
+        <div class="progress-box">
+            <div id="bar" class="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const action = params.get('action');
+        const display = action.replace(/_/g, " ")
+
+        document.getElementById('status-text').innerText = "Executing: " + display;
+
+        setTimeout(() => {
+            document.getElementById('bar').style.width = "100%";
+        }, 100);
+
+        if (action) {
+            fetch('/' + action, { method: 'POST' })
+                .then(response => console.log("Server received command"))
+                .catch(err => console.error("Error contacting ship:", err));
+        }
+
+        setTimeout(() => {
+            window.open('', '_self', '');
+            window.close();
+        }, 3200);
+    </script>
+</body>
+</html>

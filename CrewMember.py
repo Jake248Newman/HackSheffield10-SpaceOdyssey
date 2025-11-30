@@ -37,6 +37,9 @@ class CrewMember:
     def set_hunger(self, hunger):
         self.hunger = hunger
 
+    def decrease_hunger(self, num):
+        self.hunger = self.hunger - num
+
     def get_job(self):
         return self.job
 
