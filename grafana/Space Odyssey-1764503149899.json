@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -52,11 +52,11 @@
                   "color": "#f42d44",
                   "index": 2
                 },
-                "Normal": {
+                "normal": {
                   "color": "text",
                   "index": 1
                 },
-                "Warning": {
+                "warning": {
                   "color": "#ff9a3d",
                   "index": 0
                 }
@@ -177,7 +177,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -235,7 +235,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -322,7 +322,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -409,7 +409,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -497,10 +497,14 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "thresholds"
+          },
           "custom": {
             "align": "auto",
             "cellOptions": {
@@ -513,17 +517,31 @@
             "inspect": false,
             "minWidth": 100
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "Alive": {
+                  "color": "green",
+                  "index": 0
+                },
+                "Dead": {
+                  "color": "red",
+                  "index": 1
+                },
+                "Injured": {
+                  "color": "orange",
+                  "index": 2
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -550,6 +568,36 @@
               {
                 "id": "custom.width",
                 "value": 99
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "green",
+                      "value": 50
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
               }
             ]
           },
@@ -562,6 +610,36 @@
               {
                 "id": "custom.width",
                 "value": 102
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "orange",
+                      "value": 10
+                    },
+                    {
+                      "color": "green",
+                      "value": 70
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -574,6 +652,36 @@
               {
                 "id": "custom.width",
                 "value": 104
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "orange",
+                      "value": 10
+                    },
+                    {
+                      "color": "green",
+                      "value": 25
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -586,6 +694,22 @@
               {
                 "id": "custom.width",
                 "value": 148
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "status"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "applyToRow": false,
+                  "mode": "gradient",
+                  "type": "color-background"
+                }
               }
             ]
           }
@@ -648,7 +772,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -719,7 +843,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -778,7 +902,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -837,7 +961,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -896,7 +1020,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -955,7 +1079,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ef5m49qqbbnr4c"
+        "uid": "df5lgxaus2fpcd"
       },
       "fieldConfig": {
         "defaults": {
@@ -1064,5 +1188,5 @@
   "timezone": "browser",
   "title": "Space Odyssey",
   "uid": "adlsxbb",
-  "version": 50
+  "version": 66
 }

@@ -82,6 +82,8 @@ BEGIN_GAME = """
      }}
     """
 
+HAS_BEEN_RICK_ROLLED = False
+
 def init_crew(crew_members):
     for person in crew_members:
         new_member = CrewMember(person[0], person[1])
@@ -96,11 +98,16 @@ def main_loop():
     ship.increase_date()
 
     for crewmate in crew:
-        crewmate.decrease_hunger(random.randint(10,20))
-        if crewmate.get_hunger() < 50:
-            crewmate.set_health(crewmate.get_health() - 5)
-        elif crewmate.get_hunger() > 90 and crewmate.get_health() < 95:
-            crewmate.set_health(crewmate.get_health() + 5)
+        if crewmate.get_status() == "Dead":
+            crewmate.set_health(0)
+            crewmate.set_sanity(0)
+            crewmate.set_hunger(0)
+        else:
+            crewmate.decrease_hunger(random.randint(10,20))
+            if crewmate.get_hunger() < 50:
+                crewmate.set_health(crewmate.get_health() - 5)
+            elif crewmate.get_hunger() > 90 and crewmate.get_health() < 95:
+                crewmate.set_health(crewmate.get_health() + 5)
 
     crew_string = ""
 
@@ -128,6 +135,9 @@ def main_loop():
         }}
         """
     )
+
+    if (random.randint(0, 4) == 4 and not HAS_BEEN_RICK_ROLLED):
+        add_to_log("A mysterious transmission was received from yeltsa kcir: pu uoy evig annog reven", "normal")
 
     add_to_story(response["message"])
     add_to_ship()
@@ -326,7 +336,7 @@ def heal_crew():
         add_to_log("Medical supplies are low", "warning")
 
     for crewmate in crew:
-        if crewmate.get_health < 80:
+        if crewmate.get_health() < 80:
             crewmate.set_health(crewmate.get_health() + 20)
         else:
             crewmate.set_health(100)

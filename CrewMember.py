@@ -1,10 +1,13 @@
+import random
+
 class CrewMember:
     def __init__(self, name, job):
         self.name = name
-        self.health = 100
-        self.sanity = 100
+        self.health = random.randint(70,100)
+        self.sanity = random.randint(20,100)
         self.status = "Alive"
-        self.hunger = 100
+        # self.status = ["Alive", "Injured", "Dead"][random.randint(0,2)  ]
+        self.hunger = random.randint(30,80)
         self.job = job
 
     def get_name(self):
