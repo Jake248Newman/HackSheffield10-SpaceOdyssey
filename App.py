@@ -88,6 +88,7 @@ def init_crew(crew_members):
     add_to_crew(crew)
 
 def main_loop():
+    global HAS_BEEN_RICK_ROLLED
     if random.randint(0, 2) == 1:
         ship.decrease_fuel()
         decrease_fuel_log()
@@ -136,6 +137,7 @@ def main_loop():
 
     if (random.randint(0, 4) == 4 and not HAS_BEEN_RICK_ROLLED):
         add_to_log("A mysterious transmission was received from yeltsa kcir: pu uoy evig annog reven", "normal")
+        HAS_BEEN_RICK_ROLLED = True
 
     add_to_story(response["message"])
     add_to_ship()
