@@ -330,6 +330,9 @@ def heal_crew():
         else:
             crewmate.set_health(100)
 
+        if crewmate.get_status() == "Injured":
+            crewmate.set_status("Alive")
+
     add_to_ship()
     add_to_crew(crew)
 
